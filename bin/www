@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+
+var appFromAppJs = require('../app')
+
+var port = 8089
+var appName = 'wr-09week-some-times-rest-api'
+
+appFromAppJs.listen(port, () => console.log(appName + ' listening on: ' + port + 'btw you should type \n nohup npm run start & \n to run this server continuously (even after closing the terminal window). Cheers \n'))

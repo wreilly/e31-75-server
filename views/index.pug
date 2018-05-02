@@ -1,0 +1,27 @@
+extends layout
+
+block content
+    h2 Some Times
+    h3 Newspaper Articles Reference Site - now with REST API
+    p N.Y. Times URLs, Headlines
+    p <i>"Some of the Times that's fit to post."</i>
+    div
+        | A. Find an article from
+        |
+        a(href="http://www.nytimes.com" target="nyt_tab_blank") The New York Times
+        |
+        | to reference here.
+    div
+        | B. Post
+        |
+        a(href="/articles") your selected article
+        |
+        | on this articles reference site.
+    div
+        p REST API for "CRUD" Functions:
+        ol
+            li CREATE - Add Article Form on /articles page
+            li READ - Button to List All Articles, on /articles page
+            li UPDATE - From list, click on an Article. Edit from that page
+            li DELETE - From list, click on an Article. Delete from that page
+    // Note: the <script> tag for Axios is in the FOOTER, not here at bottom of index.pug

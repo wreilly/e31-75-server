@@ -1,0 +1,38 @@
+extends layout
+
+block content
+    h4 Article EDIT or DELETE page
+    p #{article.articleTitle}
+    p.tiny-please #{article.articleUrl}
+    p.tiny-please #{article._id}
+    div.edit
+        h5 EDIT Article. (Client-side JavaScript to API PUT)
+        form#apiPut
+            - var articleIdVar = article._id
+            - var articleTitleVar = article.articleTitle
+            //- Instead of hidden input for ID, we use visible but readonly input
+                // Why? Not critical, but this way the fields on the form go together on the body, as opposed to a hidden field going on the URL as param.
+            //- input(type="hidden" name="articleId_query" value=`${articleIdVar}`)
+            label(for="articleId_id") _id (read-only)
+                input(type="text" name="articleId_name" id="articleId_id" value=`${articleIdVar}` size="60" readonly)
+            br
+            label(for="articleTitle_id") Headline (PLEASE EDIT):
+                input(type="text" name="articleTitle_name" id="articleTitle_id" value=`${articleTitleVar}` size="60")
+            br
+            button(type="submit") Click to UPDATE this article
+    br
+    hr
+    div.delete
+        h5 DELETE Article. (Client-side JavaScript to API DELETE)
+        form#apiDelete
+            label(for="articleId_id") _id (read-only)
+                input(type="text" id="articleId_id" name="articleId_name" value=`${articleIdVar}` size="60" readonly)
+            br
+            label(for="articleTitle_id") Headline (read-only)
+                input(type="text" id="articleTitle_id" name="articleTitle_name" value=`${articleTitleVar}` size="60" readonly)
+            br
+            button(type="submit") Click to DELETE this article
+    div#putResult
+    div#deleteResult
+    script(src="/static/javascript/utils.js")
+    script(src="/static/javascript/client-ud.js")

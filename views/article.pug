@@ -1,0 +1,25 @@
+extends layout
+
+block content
+    h3 Some Times REST API
+    h4 Article Page
+    - var goToTimesUrl = article.articleUrl
+    p.headline N.Y. Times link:
+    p
+        strong
+            |
+            a(href=`${goToTimesUrl}` target="nyt_tab_blank") #{article.articleTitle}
+            div (See JSON entry as rendered to browser via API):
+                a(href=`/api/v1/articles/${article._id}` target="api_tab_blank") /api/v1/articles/#{article._id}
+    p(style="font-size: small;")= article.articleUrl
+    p.tiny-please #{article._id}
+
+    // Note: This Form is NOT using REST API. Going direct to Express App Router.
+    //- leave off final '/', so we get /edit?article... not /edit/?article...
+    form#apiGetEdit(action="/api/v1/articles/edit" method="GET")
+        - var articleIdVar = article._id
+        input(type="hidden" name="articleId_query" value=`${articleIdVar}`)
+        button(type="submit") Click to EDIT or DELETE this article
+        //- http://0.0.0.0:8089/api/v1/articles/edit?articleId_query=5ab991e7176b6011a4c561c3
+            // https://stackoverflow.com/questions/1116019/submitting-a-get-form-with-query-string-params-and-hidden-params-disappear
+            // https://gist.github.com/martinlau/3348535

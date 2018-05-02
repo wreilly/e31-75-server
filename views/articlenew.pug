@@ -1,0 +1,49 @@
+h4 1. Display All Articles onto this page, from REST API using CLIENT-SIDE.JS
+form#apiAllClick
+    input(type="submit" value="Display All Articles, via REST API")
+br
+form#apiNoneClick
+    input(type="submit" value="Clear Display of All Articles from API")
+hr
+br
+h4 2. Add a new article via REST API using CLIENT-SIDE .JS (*New*)
+form#clientJsForm
+    label(for="articleUrl_id") URL:
+        input(type="text" id="articleUrl_id" name="articleUrl_name" size="60" placeholder="Paste in NYT URL ..." autofocus)
+    br
+    label(for="articleTitle_id") Headline:
+        input(type="text" id="articleTitle_id" name="articleTitle_name" size="60" placeholder="Enter article headline ...")
+    br
+    //- input(type="submit" value="Click INPUT to add via REST API POST via CLIENT-SIDE JS")
+    button(type="submit" value="Click BUTTON to add via REST API POST via CLIENT-SIDE JS") Add Article via REST API
+hr
+div#postNewArticleResult
+hr
+br
+h4 3. Add a new article via EXPRESS WEB APP (as before)
+form(action="/articles" method="POST")
+    label(for="articleUrl_id") URL:
+        input(type="text" id="articleUrl_id" name="articleUrl_name" size="60" placeholder="Paste in NYT URL ...")
+    br
+    label(for="articleTitle_id") Headline:
+        input(type="text" id="articleTitle_id" name="articleTitle_name" size="60" placeholder="Enter article headline ...")
+    br
+    input(type="submit" value="Add Article via Express Web App")
+
+//- NO LONGER USING:
+//- h4 3. Add a new article via REST API, but via this Express Router App
+//- p Why? This is not properly hooked up to the web app for the returned document.
+//- p Contrast: # 1. above w. client-cr.js uses DOM innerHTML to put data on the page. Good.
+//- p Contrast: # 2. above w. Express routing uses controller to render pug page for article or list of articles. Good.
+//- p But this # 3. here can: yes, get data from API (good), but, it lacks a good way to then show it to you in browser. Just spills to screen, not on any app page, etc. Not so good.
+//- form#restApiForm(action="/api/v1/articles" method="POST")
+    label(for="articleUrl_id") URL:
+        input(type="text" id="articleUrl_id" name="articleUrl_name" placeholder="Paste in NYT URL ...")
+    br
+    label(for="articleTitle_id") Headline:
+        input(type="text" id="articleTitle_id" name="articleTitle_name" placeholder="Enter article headline ...")
+    br
+    input(type="submit" value="Click to add via REST API POST")
+//- br
+//- hr
+//- br

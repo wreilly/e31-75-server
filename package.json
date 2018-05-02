@@ -1,0 +1,20 @@
+{
+  "name": "e31-75-server-assignment-5-rest-apis-wreilly",
+  "version": "1.0.0",
+  "description": "CSCI-E31 Assignment 7 (Final). PREP/TEST/DEV REPO. \"Some Times\", with REST API. Newspaper article reference site.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./bin/www",
+    "start-dev": "nodemon --inspect ./bin/www"
+  },
+  "author": "wreilly2001@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "mongoose": "^5.0.12",
+    "pug": "^2.0.3"
+  }
+}

@@ -1,0 +1,36 @@
+extends layout
+
+block content
+    h3 Some Times REST API
+    div.row
+        div.column.left
+            include articlenew
+        div.column.middle
+            h4 Articles List FROM REST API
+            p Here, the REST API listing of Articles is pure rendered JSON, just to display/show/prove that
+                |
+                strong  READ
+                |
+                | is functioning.
+            p We do not use the REST API for navigation to the page for an individual Article.
+            p Instead, please use the list to the right as rendered by the Express Web App.
+            div#postAllResult
+        div.column.right
+            h4 Articles List FROM EXPRESS WEB APP
+            p Here, from plain old Express App listing of Articles we provide plain old clickable &lt;a href> links to a plain old Express App page for Article details.
+            p From that page, there are buttons to exercise REST API URIs to
+                |
+                strong  EDIT
+                |
+                | and
+                |
+                strong DELETE
+                |
+                | that Article.
+            ol
+                each article in articles
+                    li
+                        - var articleIdHere = article._id
+                        a(href=`/articles/${articleIdHere}`) #{article.articleTitle}
+    script(src="/static/javascript/utils.js")
+    script(src="/static/javascript/client-cr.js")
