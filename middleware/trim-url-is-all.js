@@ -21,6 +21,8 @@ middlewareModule.myMiddlewareTrimUrl = function(req, res, next) {
      * RegEx: */
 // NAIVELY FIRST THOUGHT:       string.replace(/(.)\?/, $1)
 // AFTER MUCH STRUGGLE, SEARCH: string.replace(/(.*?\?(?:(?!\?))).*/, '$1')
+    // btw,  it is the *2nd* '?' question mark in that crazy string
+//        that represents the '?' in the NYTimes URL we are trying to find. Cheers.
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace
 //
 
