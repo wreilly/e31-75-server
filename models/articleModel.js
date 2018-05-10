@@ -8,10 +8,16 @@ var articleSchema = new mongoose.Schema({
     articleTitle: {
         type: String,
         required: true
-    }
+    },
+    // MULTER-TIME *****
+    // https://stackoverflow.com/questions/35509611/mongoose-save-array-of-strings
+    /* E.g.,
+    ['wr__1525770461453-Photo 3.jpg', 'wr__1525770461459-Photo 4.jpg']
+     */
+    articlePhotos: [String]
 })
 
-console.log('Let\'s de bug a bit.')
+// console.log('Let\'s de bug a bit.')
 /* Naming:
 
 1.  I can use a variable name as I like, here in the code (e.g. "articleModelVarHere"), to make clear to me what is what, how this works. (At least while learning, student projects, etc.)

@@ -2,6 +2,11 @@ var express = require('express')
 var apiArticlesRouter = express.Router()
 
 var middlewareTrimHere = require('../../middleware/trim-url-is-all')
+/* ################################################################## */
+/*
+var middlewareMulterHere = require('../../middleware/my-multer')
+*/
+/* ################################################################## */
 
 var apiArticleControllerHereInApi = require('../../controllers/api/api-articleController')
 
@@ -129,17 +134,245 @@ apiArticlesRouter.get('/', function(req, res, next) {
  })
 
 
+/* ################################################################## */
+/* ###############  BRING MULTER BACK IN TO ROUTER, SIMPLY ########## */
+/* ################################################################## */
+/*
+ Re: POST '/api/v1/articles/articleimages' (below?) << Triggered by "Choose Files"
 
+ Goal is to simplify, no longer import a module, etc.
+ That way my POST line here in the router can just directly invoke the Multer
+ object. I wonder will that help. Ye gods.
+ That is:
+ IS NOW:        middlewareMulterHere.myMultify,
+ SHOULD BECOME: myPhotosUploadMulter.array('file', 3)
+
+ cf. usage in older simpler project:
+ /Users/william.reilly/dev/JavaScript/CSCI-E31/07-Week-POST/wr-02-nytimes
+ The multer object is right here in the Route POST / line:
+ articlesRouter.post('/postarticlesmulter', myUpload.array('articlePhotoFiles_nameM'), (req, res, next) => {
+ */
+
+var myMulter = require('multer');
+var myMkdirp = require('mkdirp')
+
+var myDiskStorage = myMulter.diskStorage({
+    destination: myDestinationFunction,
+    filename: myFilenameFunction
+})
+
+var myPhotosUploadMulter = myMulter({
+    storage: myDiskStorage,
+    fileFilter: myFileFilterFunction
+})
+
+function myDestinationFunction(req, file, callback) {
+    const destination = 'public/img';
+
+    myMkdirp(destination, function(err) {
+        if(err) {
+            console.log('dang. myMkdirp failed. ', err)
+        } else {
+            console.log('good. myMkdirp destination is: ', destination)
+            callback(null, destination)
+        }
+    })
+}
+
+
+function myFilenameFunction(req, file, callback) {
+    callback(null, 'sometimes__' + Date.now() + '_' + file.originalname)
+}
+
+function myFileFilterFunction(req, file, callback) {
+    // TODO filter on .JPG, .PNG etc. T.B.D.
+    callback(null, true) // Just accept anything, for now
+}
+
+
+// Sorry. Max of 3 photos per Article
+/* myPhotosUploadMulter.array('file', 3) */
+/*
+ myPhotosUploadMulter.array('articlePhotos_name', 3)
+ */
+
+/* ################################################################## */
+/* ###############  /BRING MULTER BACK IN TO ROUTER, SIMPLY ########## */
+/* ################################################################## */
+
+
+
+
+/* ************************************************** */
+/* ******** POST '/api/v1/articles/articleimages'  ************ */
+/* ************************************************** */
+apiArticlesRouter.post(
+    '/articleimages',
+/* Did NOT work to factor Multer out to another module/file/thing. No.
+    middlewareMulterHere.myMultify,
+*/
+
+// NEW: 20180510-0639. Do note: Multer setup code must be ABOVE this line! o la.
+    myPhotosUploadMulter.array('file', 3),
+    function(req, res, next) {
+/*  NO LONGER LOG this VERY VERY VERY Long thing (req)
+        console.log('REST API ROUTER POST /articleimages req ? has what? ', req) //
+*/
+        /* KEY FINDING:
+        1) If you invoke this Route off the "Choose Files" click ... it works for the files.   (Body empty because you have no fielded data)
+        2) If you invoke this Routes off the "Submit whole Form" click ... it does not work for the files. The fielded data is successfully on the body.
+*/
+         /*   # 1 :  Off the "Choose Files" click:  BODY = NO, FILES = YES
+         IncomingMessage
+         baseUrl
+         :
+         "/api/v1/articles"
+         body
+         :
+         {} ...
+         FINALLY! has files: []  Davvero.
+         */
+
+/*
+# 2)  Off "Submit whole Form" click: BODY = YES, FILES = NO
+         REST API ROUTER POST /articleimages req ? has what?
+         IncomingMessage
+         baseUrl
+         :
+         undefined
+         body
+         :
+         articlePhotos_name
+         :
+         "C:\fakepath\010006-MexAmerican.jpg"
+         articleTitle_name
+         :
+         "we are in the house"
+         articleUrl_name
+         :
+         "http://nytimes.com"
+         file
+         :
+         "C:\fakepath\010006-MexAmerican.jpg"
+         client
+         :
+         Socket {connecting: false, _hadError: false, _handle: null, _parent: null, _host: null, …}
+         complete
+         :
+         true
+         connection
+         :
+         Socket {connecting: false, _hadError: false, _handle: null, _parent: null, _host: null, …}
+         domain
+         :
+         null
+         files
+         :
+         Array(0)
+         length
+         :
+         0
+         */
+
+        console.log('REST API ROUTER POST /articleimages req.files ? has what? ', req.files) // undefined << Not any more! :o)
+        /*
+        OMG IT WORKED. YE GODS DAVVERO.
+
+
+         REST API ROUTER POST /articleimages req.files ? has what?
+         [{…}]
+         0
+         :
+         destination
+         :
+         "public/img"
+         encoding
+         :
+         "7bit"
+         fieldname
+         :
+         "file"
+         filename
+         :
+         "sometimes__1525949021227_010006-MexAmerican.jpg"
+         mimetype
+         :
+         "image/jpeg"
+         originalname
+         :
+         "010006-MexAmerican.jpg"
+         path
+         :
+         "public/img/sometimes__1525949021227_010006-MexAmerican.jpg"
+         size
+         :
+         115777
+
+AND, LOOKEE HERE:
+         WREILLY-MC-L:e31-75-server william.reilly$ ls public/img/
+         sometimes__1525949021227_010006-MexAmerican.jpg
+
+A PICTURE! How nice.
+         */
+
+        console.log('REST API ROUTER POST /articleimages req.body ? has what? ', req.body) // empty {}
+        apiArticleControllerHereInApi.apiUploadedArticleImagesNowDoNothing(req, res, next)
+    }
+)
+/*  MULTER-TIME *****
+ We are now (trying to) use a Middleware here to do MULTER stuff
+ on the uploaded photo(s)...
+ */
 
 /* ************************************************** */
 /* ******** POST '/api/v1/articles/'  ************ */
 /* ************************************************** */
-apiArticlesRouter.post('/', middlewareTrimHere.myMiddlewareTrimUrl, function(req, res, next) {
-    apiArticleControllerHereInApi.apiCreateArticle(req, res, next)
-})
+apiArticlesRouter.post(
+    '/',
+    // NEW 20180510-0801 whoa.
+    // Hmm. We used Multer on previous step (/articleimages ).
+    // That worked. We have the file(s) now at /public/img
+    // We have no need to run Multer again here. Commenting out.
+    /*
+    Hmm. With it Commented out, wasn't getting nothing:
+     REST API ROUTER POST / req.files ? has what?  undefined
+     REST API ROUTER POST / req.body ? has what?  {}
+     */
+    // Not so fast, keemosabbie.
+    myPhotosUploadMulter.array('file', 3),
+    /*
+    That's better!  (NOT Commented Out)
+     REST API ROUTER POST / req.files ? has what?  []
+     REST API ROUTER POST / req.body ? has what?  { articleUrl_name: 'http://nytimes.com',
+     articleTitle_name: 'gtyhnn',
+     articlePhotos_name: 'C:\\fakepath\\010006-MexAmerican.jpg',
+     file: 'C:\\fakepath\\010006-MexAmerican.jpg' }
+     */
+/*    middlewareMulterHere.myMultify, // << Did NOT work to factor Multer out to another module/file/thing. No. */
+    // TEMPORARY CUT IT OUT . I don't know why not working. Was in past. Sheesh.
+    middlewareTrimHere.myMiddlewareTrimUrl,
+    function(req, res, next) {
+        console.log('REST API ROUTER POST / req.files ? has what? ', req.files) // []  empty :o(
+        console.log('REST API ROUTER POST / req.body ? has what? ', req.body)
+        /*
+         { articleUrl_name: 'http://nytimes.com',
+         articleTitle_name: 'gt',
+         articlePhotos_name: 'C:\\fakepath\\010006-MexAmerican.jpg',
+         file: 'C:\\fakepath\\010006-MexAmerican.jpg' }
+         */
+
+        apiArticleControllerHereInApi.apiCreateArticle(req, res, next)
+    }
+    )
+/*  MULTER-TIME *****
+We are now (trying to) use a Middleware here to do MULTER stuff
+on the uploaded photo(s)...
+ */
  /*
      We here use a Middleware, to simply trim the URL
  */
+
+
 
 
 

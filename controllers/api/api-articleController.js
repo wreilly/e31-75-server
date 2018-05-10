@@ -140,7 +140,8 @@ apiArticleController.apiGetAllArticles = function (req, res, next) {
                 // /public/javascript/utils.js
                 // So it does work to just send the JavaScript Object (whatIGot)
                 // res.send(whatIGot)
-                console.log('1. Controller whatIGot (from data service) ', whatIGot)
+                // Let's just look at one of them... [0]
+                console.log('1. Controller whatIGot[0] (from data service) ', whatIGot[0])
                 /*
                 A JavaScript OBJECT:
                  whatIGot
@@ -169,7 +170,11 @@ apiArticleController.apiGetAllArticles = function (req, res, next) {
                  undefined
                  */
                 var strungWhatIGot = JSON.stringify(whatIGot)
-                console.log('2. strungWhatIGot ', whatIGot)
+                // console.log('2. strungWhatIGot ', strungWhatIGot)
+                /*
+                 [{"articlePhotos":[],"_id":"5ac35e6fa15feb87da63efa5","articleUrl":"https://www.nytimes.com/2018/03/30/sports/catholic-basketball-final-four.html","articleTitle":"Why Some Baptist Colleges Fail at Basketball","__v":0,"articleCategory":"undefined"},{"articlePhotos":[], ...}]
+                 */
+
                 /* Yes, a STRING. Out of all the extra data in that Object, here is the sort of ".toString()" version, at least of the whatIGot.data I guess, that JSON.stringify apparently delivers:
                  "[{"_id":"5ab991e7176b6011a4c561c3","articleUrl":"https://www.nytimes.com/video/us/100000005813009/stephon-clark-killed-police-sacramento...}]"
                  */
@@ -188,6 +193,29 @@ apiArticleController.apiGetAllArticles = function (req, res, next) {
 
 
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+/* !!!!!  apiArticleController.apiUploadedArticleImagesNowDoNothing   !!!!! */
+/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+apiArticleController.apiUploadedArticleImagesNowDoNothing = function(req, res, next) {
+    // Hmm. The router call did the Multer work with the images already
+    // Nothing to do here in the Controller as I understand it.
+
+    console.log('REST API CONTROLLER apiUploadedArticleImagesNowDoNothing req.files ? has what? ', req.files)
+    console.log('REST API CONTROLLER apiUploadedArticleImagesNowDoNothing req.files[0].path ', req.files[0].path)
+
+    // We'll just fire next() ? Is that moral equivalent of a return, or a res.send etc. ?? we shall see.
+    console.log('apiUploadedArticleImagesNowDoNothing ... "next()" ? << NO  return ?? << NO res.send << OK ')
+    // next(); // No
+    // return; // No
+    res.send({ "crazymessage": "RES.SEND in JSON, Congratulations, your file was uploaded. At least we think it was. c/o apiUploadedArticleImagesNowDoNothing","yourpathonefile": req.files[0].path, "allreqfiles": req.files })
+
+    /* Hooray for our side
+     {crazymessage: "RES.SEND in JSON, Congratulations, your file was u… it was. c/o apiUploadedArticleImagesNowDoNothing", yourpath: "public/img/sometimes__1525951820700_010006-MexAmerican.jpg"}
+     */
+
+}
+
+
+/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 /* !!!!!  apiArticleController.apiCreateArticle   !!!!! */
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 apiArticleController.apiCreateArticle = function(req, res, next) {
@@ -201,6 +229,33 @@ apiArticleController.apiCreateArticle = function(req, res, next) {
     var articleToSave = {}
     articleToSave.articleUrl = req.body.articleUrl_name
     articleToSave.articleTitle = req.body.articleTitle_name
+    articleToSave.articlePhotos = req.body.articlePhotos_name
+
+    // MULTER-TIME *****
+    // Hmm. TODO This is not right yet...
+
+    console.log('MULTER ARE YOU THERE? ... Controller ')
+   // console.log('req.body.articlePhotos: ', req.body.articlePhotos) // undefined
+    console.log('req.body.articlePhotos_name: ', req.body.articlePhotos_name) // C:\fakepath\010006-MexAmerican.jpg // undefined too << WAS
+    console.log('req.files: ', req.files) // [] empty :o(
+    // undefined also << WAS
+/* No. (I think.)
+The Multer file business is up on the Angular client.
+Not down here on the Express REST API.
+ The Express REST API only has to deal with the filenames, the metadata, to be stored in the MongoDB database.
+ The files themselves should get handled/uploaded by Angular and stored in some directory /public/img
+ Hmm. U sure about that? Hmm. Time for a Re-Think. (O damn that hurts.)
+
+ Nope:
+   articleToSave.articlePhotos = req.files; // whamma-jamma? y not // req.body.articlePhotos_name
+*/
+    console.log('SERVER. Controller. articleToSave: ', articleToSave)
+    /*
+     { articleUrl: 'http://nytimes.com',
+     articleTitle: 'gt',
+     articlePhotos: 'C:\\fakepath\\010006-MexAmerican.jpg' }
+     */
+
 
     articleDataServiceHereInApiController.saveArticle(articleToSave)
         .then(

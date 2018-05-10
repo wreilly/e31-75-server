@@ -27,7 +27,13 @@ middlewareModule.myMiddlewareTrimUrl = function(req, res, next) {
 //
 
     console.log('PRE-REGEX! req.body.articleUrl_name as passed in was: ', req.body.articleUrl_name)
+    // Wherefore the 'bang' ! ?
+/* Yah. That G.D. bang was messing it up. How did it get there ??? O la.
+    req.body.articleUrl_name = req.body.articleUrl_name.replace(/(.*?\?(?:(?!\?))).*!/, '$1')
+*/
+// Bang-free: YES. WORKS. LOVELY.
     req.body.articleUrl_name = req.body.articleUrl_name.replace(/(.*?\?(?:(?!\?))).*/, '$1')
+
     console.log('MIDDLEWARE! POST-REGEX! req.body.articleUrl_name now is: ', req.body.articleUrl_name)
 
 // .replace(/(.*?\?(?:(?!\?))).*/, '$1')

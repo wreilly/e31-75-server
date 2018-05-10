@@ -1,5 +1,8 @@
 # .gitignore from Express Generator
 
+# This App-Specific:
+public/img
+
 # Also:
 nohup.out
 # Emacs auto-save, auto-backup stuff:
