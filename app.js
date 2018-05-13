@@ -4,6 +4,42 @@ var express = require('express')
 var app = express()
 var path = require('path')
 
+/*
+ASSIGNMENT 7
+ https://github.com/wreilly/e31-assignment-08-proxy-and-client-wreilly/blob/master/proxy-server/server.js
+
+ Note: I did all the below for PRODUCTION DIGITAL OCEAN
+ in Git repo: "assignment7-final-wreilly"
+
+ But I have NOT done the "combo" biz for my two repositories,
+ used thus far for local development,
+ that are *slightly* older:
+ - e31-76-client
+ - e31-75-server
+
+
+  N.B.
+ With new "combo" proxy + client Git repository,
+ this path now goes UP and OUT of
+ the Express /server directory,
+ to get over and then down to the
+ Angular Client /client/dist directory.
+ Video 13.8 at ~07:48
+ https://canvas.harvard.edu/courses/35096/pages/week-13-build-and-deploy?module_item_id=378294
+ app.use('/', express.static('../client/dist'));
+ */
+
+/*  COMMENTING OUT FOR THIS "development" REPO: e31-75-server
+
+const client_dist_dir_done_right = path.join(__dirname, '..', 'client', 'dist');
+
+app.use('/', express.static(client_dist_dir_done_right))
+*/
+
+
+
+
+
 var bodyParser = require('body-parser')
 // https://www.npmjs.com/package/body-parser#extended
 app.use(bodyParser.urlencoded({extended: false}))
@@ -63,9 +99,27 @@ app.set('views', path.join(__dirname, 'views'))
 app.use('/api/v1/articles', apiArticlesRouterHere)
 app.use('/articles', articlesRouterHere)
 
+/* Old "Catch-all" - but we'll continue using it! :o) */
 app.get('/', (req, res, next) => {
-    console.log('just on the root home page.')
+    console.log('just on the root home page. for this "development" repo e31-75-server')
     res.render('index')
 })
+
+
+/*
+ Catch-All:
+ - If user hits browser button to refresh page, the Angular SPA will not be first recipient of that new request.
+ The Express app will be.
+ - For any request the Express app does not have a route for, it will simply
+ use this catch-all, and redirect to the Angular index.html page.
+ - Recall, the Express (proxy server) app only has one route, for the WS API GET :3000/myspecialproxy/:book_id
+ - Anything else will fall to this Catch-All:
+ */
+/* COMMENTING OUR FOR THIS "development" REPO: e31-75-server
+app.use('/*', (req, res, next) => {
+    res.sendFile('index.html', {root: client_dist_dir_done_right})
+})
+*/
+
 
 module.exports = app
